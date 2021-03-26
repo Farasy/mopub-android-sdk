@@ -274,7 +274,8 @@ public class FullscreenAdController implements BaseVideoViewController.BaseVideo
             if (config == null || config.getController() == null) {
                 mMoPubWebViewController.fillContent(htmlData,
                         adData.getViewabilityVendors(),
-                        webView -> { });
+                        webView -> {
+                        });
             }
 
             if ("html".equals(mAdData.getAdType())) {
@@ -390,6 +391,12 @@ public class FullscreenAdController implements BaseVideoViewController.BaseVideo
             mImageView.setLayoutParams(layoutParams);
             relativeLayout.addView(mImageView);
             if (mVideoCtaButtonWidget != null) {
+                try {
+                    if (mVideoCtaButtonWidget.getParent() != null)
+                        ((ViewGroup) mVideoCtaButtonWidget.getParent()).removeView(mVideoCtaButtonWidget);   //TODO remove parents to avoid same bug as above. A crash will happen otherwise!
+                } catch (Throwable ignore) {
+                }
+                
                 relativeLayout.addView(mVideoCtaButtonWidget);
             }
             mCloseableLayout.addView(relativeLayout);
@@ -450,7 +457,7 @@ public class FullscreenAdController implements BaseVideoViewController.BaseVideo
 
     @Override
     public void onCompanionAdsReady(@NonNull final Set<VastCompanionAdConfig> vastCompanionAdConfigs,
-                                   final int videoDurationMs) {
+                                    final int videoDurationMs) {
         Preconditions.checkNotNull(vastCompanionAdConfigs);
 
         if (mCloseableLayout == null) {
